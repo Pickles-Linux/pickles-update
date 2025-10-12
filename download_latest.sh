@@ -3,7 +3,7 @@
 # This script fetches the URL of the latest .zst file from the specified GitHub repository's releases and downloads it.
 
 # Set the GitHub repository API URL
-REPO_API_URL="https://api.github.com/repos/Stu-Pickles3047/pickles-update/releases/latest"
+REPO_API_URL="https://api.github.com/repos/Pickles-Linux/pickles-update/releases/latest"
 
 echo "Fetching latest release information from GitHub..."
 

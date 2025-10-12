@@ -1,21 +1,31 @@
 # Pickles Update
 
-A user-friendly wrapper script for `pacman` to manage system updates on Arch Linux-based distributions like Pickles Linux. This tool simplifies the update process,and aims to take the place of similiar wrappers
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+[![GitHub release](https://img.shields.io/github/release/Pickles-Linux/pickles-update.svg)](https://GitHub.com/Pickles-Linux/pickles-update/releases/)
+[![GitHub issues](https://img.shields.io/github/issues/Pickles-Linux/pickles-update.svg)](https://GitHub.com/Pickles-Linux/pickles-update/issues/)
+
+A user-friendly wrapper script for `pacman` to manage system updates on Arch Linux-based distributions like Pickles Linux. This tool simplifies the update process and aims to take the place of similar wrappers.
+  - **⚠️ Note** Current version uses and requires paru To be removed from V4.0
 
 ## 🚀 Features
 
+- **Simple Usage**: Single command `update` for system updates
+- **Mirror Optimization**: Built-in mirror ranking with `--mirrors` or `-m` flag
+- **Automatic Installation**: Self-updating script with latest releases
+- **Package Management**: Seamless integration with pacman
+- **Lightweight**: Minimal dependencies and fast execution
 
 ## 📦 Installation
 
 To install `pickles-update`, you can use `paru` directly from this Git repository. This is the recommended method as it handles all dependencies automatically.
 
 ```bash
-wget https://raw.githubusercontent.com/Stu-Pickles3047/pickles-update/main/download_latest.sh
+wget https://raw.githubusercontent.com/Pickles-Linux/pickles-update/main/download_latest.sh
 chmod +x download_latest.sh
 ./download_latest.sh
 
 ```
-or add the Pickles Linux repo see: <website for repo instructions
+Alternatively, you can add the Pickles Linux repository to your system for automatic updates.
 ## 🛠 Usage
 
 Once installed, you can run the `update` command from your terminal.
