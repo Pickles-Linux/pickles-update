@@ -5,7 +5,8 @@
 [![GitHub issues](https://img.shields.io/github/issues/Pickles-Linux/pickles-update.svg)](https://GitHub.com/Pickles-Linux/pickles-update/issues/)
 
 A user-friendly wrapper script for `pacman` to manage system updates on Arch Linux-based distributions like Pickles Linux. This tool simplifies the update process and aims to take the place of similar wrappers.
-  - **⚠️ Note** Current version uses and requires paru To be removed from V4.0
+  - **⚠️ Note** Current version uses and requires "paru"
+       - need for paru will be removed from V4
 
 ## 🚀 Features
 
