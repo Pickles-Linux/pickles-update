@@ -24,52 +24,15 @@ A modular script suite for managing system updates on Arch Linux-based distribut
 
 **⚠️ Development Version - Not for Production Use**
 
-To install the development version of `pickles-update`, you'll need development tools:
-
-**Prerequisites:** `base-devel` package group, `git`
-
-```bash
-git clone https://github.com/Pickles-Linux/pickles-update.git -b dev
-cd pickles-update
-makepkg -si
-```
-
-This will install the scripts to `/etc/pickles-linux/pickles-update/` and create symlinks in `/usr/bin`.
-
-**Note:** This is a development version with modular design and may not be fully stable.
+No Current Install available
 
 ## 🛠 Usage
 
-Once installed, use the `pickles-update` or `pupdate` commands.
-
-- To run a standard system update:
-  ```bash
-  pickles-update
-  # or
-  pupdate
-  ```
-
-- To update and rate mirrors first:
-  ```bash
-  pickles-update -m
-  # or
-  pupdate --mirrors
-  ```
-
-- To install specific packages:
-  ```bash
-  pickles-update -S package1 package2
-  ```
-
-- Other options: See `pickles-update --help` for full usage.
+- TO BE ADDED
 
 ## 📄 Man Page
 
-A man page is included. View it with:
-
-```bash
-man pickles-update
-```
+- TO BE ADDED
 
 ## 🤝 Contributing
 
