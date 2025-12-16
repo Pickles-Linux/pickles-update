@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+##########################################################
+#  Dill 
+#  System update utility for Arch-based Linux distros
+#
+#  Repository:
+#    https://github.com/Pickles-Linux/pickles-update 
+#       To be moved to own Repor after 1st Stable Release
+#
+#  Author:
+#    Stu Pickles
+#    https://github.com/Stu-Pickles3047
+#               for
+#   Pickles Linux
+#   https://github.com/Pickles-Linux/
+#
+#  License:
+#    The Unlicense
+#
+# -------------------------------------------------
+#  Description:
+#    An update helper for Pickles Linux.
+#    Designed for Humor, and future growth.
+#   Designed as a complete AUR Helper, removing the need for Paru, yay or alternatives
+#   dill is designed to be modular for easy update, ease of addition of extra scripts etc.
+#   
+#   Rated R for Raunchy Aussie 
+#
+#  Script Purpose:
+#    This script is for searching for packages, both locally installed
+#    and in the repositories/AUR.
+# -------------------------------------------------
+
+echo "DILL-QUERY: You're on the hunt for something, eh? Lookin' for '$1'?"
+echo "(Just a heads-up, I'm a placeholder. I couldn't find a beer in a brewery right now.)"
+
+# TODO:
+# 1. Source config and language files.
+# 2. Parse arguments to see if we're searching installed (-Q) or repos (-S).
+# 3. Use pacman to perform the appropriate search.
+# 4. Also search the AUR using the dill-aur-library.
+# 5. Format the output to be easily readable.
+
+exit 0

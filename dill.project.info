@@ -1,0 +1,80 @@
+dill will be a COMPLETE Replacement for paru or yay or alternatives
+    it is designed so it feels familiar to both arch users ie dill -Syu updates, or for ex-debian users dill update etc
+it is replacing pickles-update
+it is designed to be modular, for ease of use, updates, and mod adding
+It is designed with ease of use, by both Expert Arch users, and Debian users moving to Arch
+dill should have some "Aussie Bogan" humor, With an R18+ rating, can be crude, can swear, Definately sarcastic
+
+
+We are creating a Complete package which in a standard arch install will be installed to /usr/lib/dill/ 
+with symlinks in /usr/bin(/dill/) to dill , and eventually dill-tui & dill-gui
+
+dill is the bin/executable for dill It contains the redirections
+dill.config is the user changeable config
+dill-gui and dill-tui are placeholders for futute updates, Can be edited for ideas
+
+pickles-update.sh Is to enform previous pickles-update users about change to dill, and show dill help or man package
+
+dill.config is to be used for User editable config (some examples in already)
+Scripts should first check ~/.config/dill/dill.config, and if it doesn't exist use /usr/lib/dill/dill.config
+.md files should be self explanatory
+
+scripts folder scripts/ equates to /usr/lib/dill/scripts/
+
+Scripts in scripts/ Are for modules
+
+Each File created should include a header equivelant to
+
+"
+##########################################################
+#  Dill 
+#  System update utility for Arch-based Linux distros
+#
+#  Repository:
+#    https://github.com/Pickles-Linux/pickles-update 
+#       To be moved to own Repor after 1st Stable Release
+#
+#  Author:
+#    Stu Pickles
+#    https://github.com/Stu-Pickles3047
+#               for
+#   Pickles Linux
+#   https://github.com/Pickles-Linux/
+#
+#  License:
+#    The Unlicense
+#
+# -------------------------------------------------
+#  Description:
+#    An update helper for Pickles Linux.
+#    Designed for Humor, and future growth.
+#   Designed as a complete AUR Helper, removing the need for Paru, yay or alternatives
+#   dill is designed to be modular for easy update, ease of addition of extra scripts etc.
+#   
+#   Rated R for Raunchy Aussie 
+#
+#  Script Purpose:
+    Description of script Purpose
+# -------------------------------------------------
+
+Rules:
+Can not use paru, yay or alternatives.
+If code used (if allowed) from paru or yay or other, ensure refrenced with credit
+Include header in EVERY file created or edited
+all code languages and dependencies should be declared in header in each file and full dependencies list in @dill
+
+Messages (echo, printf etc) should be taken from dill.languages
+
+
+create an outline of each script, update status and todo .md and create a workflow.md 
+
+Move and create directories as needed.
+Eventually We will have a PKGBUILD
+
+Needs to be able to be run with ./dill (for devel purposes or once installed dill}
+
+ignore .git
+ 
+
+
+

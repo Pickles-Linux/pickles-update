@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+#
+#  Dill (formerly Pickles Update)
+#  System update utility for Arch-based Linux distros
+#
+#  Repository:
+#    https://github.com/Pickles-Linux/pickles-update
+#
+#  Author:
+#    Stu Pickles
+#    https://github.com/Stu-Pickles3047
+#
+#  License:
+#    The Unlicense
+#
+# -------------------------------------------------
+#  Description:
+#    An update helper for Pickles Linux.
+#    Designed for clarity, safety, and future growth.
+# -------------------------------------------------
+
+
+#Currently Works Only edit to make useful to other dill scripts
+set -Eeuo pipefail
+
+# ------------------------------
+# Dependency Check
+# ------------------------------
+if ! command -v rate-mirrors &> /dev/null; then
+    echo "This script requires 'rate-mirrors', but it is not installed."
+    read -p "Would you like to install it now? (y/N): " choice
+    case "$choice" in
+        y|Y)
+            echo "Installing rate-mirrors..."
+            sudo pacman -S --noconfirm rate-mirrors
+            ;;
+        *)
+            echo "Installation cancelled. Cannot proceed without rate-mirrors."
+            exit 1
+            ;;
+    esac
+fi
+
+# ------------------------------
+# Mirrorlist Processing
+# ------------------------------
+MIRRORLIST_DIR="/etc/pacman.d"
+
+# Source configuration
+source "$(dirname "$0")/dill-load-config"
+
+echo "Checking for mirrorlists in $MIRRORLIST_DIR..."
+
+for mirror_file in "${!PROVIDER_MAP[@]}"; do
+    full_path="$MIRRORLIST_DIR/$mirror_file"
+    
+    if [[ -f "$full_path" ]]; then
+        provider="${PROVIDER_MAP[$mirror_file]}"
+        echo "Found '$mirror_file'. Processing with provider '$provider'."
+
+        # 1. Backup the existing mirrorlist (requires sudo)
+        backup_path="$full_path.bak"
+        echo "Backing up '$full_path' to '$backup_path'..."
+        sudo cp "$full_path" "$backup_path"
+
+        # 2. Rate the mirrors (does not require sudo)
+        echo "Rating mirrors for '$provider'... (This may take a moment)"
+        
+        temp_output_file=$(mktemp)
+        # Run rate-mirrors as the current user.
+        # The pipefail option ensures that if rate-mirrors fails, the condition is met.
+        if ! rate-mirrors "$provider" 2>&1 | tee /dev/stderr > "$temp_output_file"; then
+            echo "Error: 'rate-mirrors' command failed for provider '$provider'. Restoring from backup."
+            sudo mv "$backup_path" "$full_path"
+            rm -f "$temp_output_file"
+            exit 1
+        fi
+
+        # Grep the server lines from the output file.
+        rated_mirrors=$(grep -E '^Server' "$temp_output_file" || true)
+        rm -f "$temp_output_file"
+        
+        if [[ -z "$rated_mirrors" ]]; then
+            echo "Error: Failed to find any servers from 'rate-mirrors' output for '$provider'. Restoring from backup."
+            sudo mv "$backup_path" "$full_path"
+            exit 1
+        fi
+
+        # 3. Prepare the new mirrorlist content
+        temp_file=$(mktemp)
+        cat > "$temp_file" <<-EOF
+### '$mirror_file' ###
+## Created by dill ##
+## with rate-mirrors ##
+
+# Mirrorlist
+$rated_mirrors
+EOF
+
+        # 4. Overwrite the original mirrorlist (requires sudo)
+        echo "Updating '$full_path' with new mirrors."
+        sudo mv "$temp_file" "$full_path"
+        
+        echo "Successfully updated '$mirror_file'."
+    else
+        echo "Skipping '$mirror_file' (not found)."
+    fi
+    echo "" # Newline for cleaner output
+done
+
+echo "Mirrorlist update process complete."
+exit 0

@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+##########################################################
+#  Dill 
+#  System update utility for Arch-based Linux distros
+#
+#  Repository:
+#    https://github.com/Pickles-Linux/pickles-update 
+#       To be moved to own Repor after 1st Stable Release
+#
+#  Author:
+#    Stu Pickles
+#    https://github.com/Stu-Pickles3047
+#               for
+#   Pickles Linux
+#   https://github.com/Pickles-Linux/
+#
+#  License:
+#    The Unlicense
+#
+# -------------------------------------------------
+#  Description:
+#    An update helper for Pickles Linux.
+#    Designed for Humor, and future growth.
+#   Designed as a complete AUR Helper, removing the need for Paru, yay or alternatives
+#   dill is designed to be modular for easy update, ease of addition of extra scripts etc.
+#   
+#   Rated R for Raunchy Aussie 
+#
+#  Script Purpose:
+#    This script handles installing packages.
+#    It first checks the official repos, and if it's not found there,
+#    it'll search the AUR.
+# -------------------------------------------------
+
+echo "DILL-INSTALL: Someone wants to install something? About bloody time."
+echo "(I'm just a placeholder for now, so I can't actually install '$1' for ya. Sorry, chief.)"
+
+# TODO:
+# 1. Source config and language files.
+# 2. Check for package in official repos.
+# 3. If found, ask to install with pacman.
+# 4. If not found, search the AUR using dill-aur-library.
+# 5. If found in AUR, use dill-aur-library to build and install.
+# 6. If not found anywhere, tell the user they're dreaming.
+
+exit 0
