@@ -30,18 +30,88 @@
 #  Script Purpose:
 #    This script handles the full system update process.
 #    It syncs repos, updates official packages, then updates AUR packages.
+#
+#Useage 
+#dill update <mirror>
+#dill -Syu <mirror>
+#dill --update --mirror
 # -------------------------------------------------
+#Todo: 
+#Add all Useage options with examples
 
-echo "DILL-UPDATE: You rang? Righto, let's get this show on the road."
-echo "(Not really, I'm just a placeholder for now. But one day, I'll update your whole system!)"
+# Get the directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPTS_DIR="$SCRIPT_DIR"
 
-# TODO:
-# 1. Source config and language files.
-# 2. Sync pacman repos (pacman -Syy)
-# 3. Check for official package updates.
-# 4. Ask to proceed.
-# 5. Update official packages.
-# 6. Check for AUR updates using dill-aur-library.
-# 7. Update AUR packages.
+# Source the library
+source "$SCRIPTS_DIR/dill-aur-library"
+
+# Check for mirror flag
+if [ "$1" = "mirror" ] || [ "$1" = "mirrors" ] || [ "$1" = "--mirror" ] || [ "$1" = "--mirrors" ] || [ "$1" = "--m" ]; then
+    echo "Updating mirrorlist..."
+    "$SCRIPTS_DIR/dill-mirrorlist"
+fi
+
+# Sync repos
+echo "Hold my beer my while I Sync pacman repos..."
+sudo pacman -Syy
+
+# Check official updates
+echo "Checking for official package updates..."
+official_updates=$(pacman -Qu)
+
+# Check AUR updates
+echo "Checking for AUR updates..."
+aur_updates=$(aur_check_updates)
+
+# Show updates
+if [ -n "$official_updates" ]; then
+    echo "Official updates:"
+    echo "$official_updates"
+fi
+if [ "$aur_updates" != "No AUR updates available" ]; then
+    echo "AUR updates:"
+    echo "$aur_updates"
+fi
+if [ -z "$official_updates" ] && [ "$aur_updates" = "No AUR updates available" ]; then
+    echo "No updates available. Ahh Beer O'clock"
+    exit 0
+fi
+
+# Ask to proceed
+read -p "Proceed with updates? (y/N) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Update cancelled."
+    exit 0
+fi
+
+# Update official
+if [ -n "$official_updates" ]; then
+    echo "Grab a Beer, this could take a while"
+    echo "Updating official packages..."
+    sudo pacman -Su --noconfirm
+fi
+
+# Update AUR
+if [ "$aur_updates" != "No AUR updates available" ]; then
+    echo "Updating AUR packages..."
+    while read -r line; do
+        pkg=$(echo "$line" | cut -d' ' -f1)
+        echo "Updating $pkg..."
+        aur_download "$pkg" "/tmp/aur-$pkg"
+        aur_build "/tmp/aur-$pkg"
+        pkgfile=$(ls /tmp/aur-$pkg/*.pkg.tar.zst | head -1)
+        aur_install "$pkgfile"
+        rm -rf "/tmp/aur-$pkg"
+    done <<< "$aur_updates"
+fi
+
+# Offer reboot
+read -p "Reboot now? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    reboot
+fi
 
 exit 0

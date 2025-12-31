@@ -31,6 +31,13 @@
 #    This is the main executable for dill. It's a dispatcher.
 #    It parses user arguments and decides which sub-script to call.
 #    It's the only thing a user should directly interact with.
+#
+# Usage:
+# dill <command> <options>
+# eg.
+# dill update mirrors
+
+#TODO: Add all usage options for dill + scripts
 # -------------------------------------------------
 
 # Get the directory where the script is located
@@ -62,29 +69,33 @@ source "$SCRIPT_DIR/dill.language" # Source the language file
 # ------------------------------
 # Main Logic
 # ------------------------------
+
+"$SCRIPTS_DIR/dill-header"
+
 # Check for no arguments
 if [ -z "$1" ]; then
-    echo "$MSG_NO_ARGS"
-    exit 1
+    echo "$MSG_UPDATE_PROMPT"
+        "$SCRIPTS_DIR/dill-update"
+    exit 0
 fi
 
 # Handle commands
 case "$1" in
     -Syu|update)
         echo "$MSG_UPDATE_PROMPT"
-        # "$SCRIPTS_DIR/dill-update" "${@:2}"
+        "$SCRIPTS_DIR/dill-update" "${@:2}"
         ;;
     -S|install)
         echo "$MSG_INSTALL_PROMPT"
-        # "$SCRIPTS_DIR/dill-install" "${@:2}"
+        "$SCRIPTS_DIR/dill-install" "${@:2}"
         ;;
     -R|remove)
         echo "$MSG_REMOVE_PROMPT"
-        # "$SCRIPTS_DIR/dill-remove" "${@:2}"
+        "$SCRIPTS_DIR/dill-remove" "${@:2}"
         ;;
     -Q|search)
         echo "$MSG_QUERY_PROMPT"
-        # "$SCRIPTS_DIR/dill-query" "${@:2}"
+        "$SCRIPTS_DIR/dill-query" "${@:2}"
         ;;
     *)
         printf "$MSG_UNKNOWN_COMMAND\n" "$1"

@@ -55,7 +55,7 @@ fi
 declare -A PROVIDER_MAP
 PROVIDER_MAP["mirrorlist"]="arch"
 # Add other mappings here if needed, e.g.
-# PROVIDER_MAP["chaotic-mirrorlist"]="chaotic-aur"
+PROVIDER_MAP["chaotic-mirrorlist"]="chaotic-aur"
 
 
 # ------------------------------

@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 ##########################################################
 #  Dill 
 #  System update utility for Arch-based Linux distros
@@ -27,14 +25,38 @@
 #   
 #   Rated R for Raunchy Aussie 
 #
-#  Script Purpose:
-#    This is a placeholder for a future GUI for dill.
-#    Don't get your hopes up, this won't be worked on for a while.
-# -------------------------------------------------
+#compdef dill
 
-echo "Look at you, all fancy, wantin' a GUI."
-echo "We're still bashing rocks together to get the command-line version working."
-echo "A graphical interface is a bloody long way off, mate."
-echo "Check back after the first stable release. Maybe."
+_dill() {
+    local -a commands
+    commands=(
+        'update:update system'
+        'install:install packages'
+        '-S:install packages'
+        'remove:remove packages'
+        '-R:remove packages'
+        'search:search packages'
+        '-Q:search packages'
+        '-Syu:update system'
+    )
 
-exit 1
+    _arguments -C \
+        '1: :_describe command commands' \
+        '*::package:->packages' \
+        && return
+
+    case $state in
+        packages)
+            case $words[2] in
+                install|-S|search|-Q)
+                    _values 'package' $(pacman -Slq 2>/dev/null)
+                    ;;
+                remove|-R)
+                    _values 'package' $(pacman -Qq 2>/dev/null)
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_dill

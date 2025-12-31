@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 ##########################################################
 #  Dill 
 #  System update utility for Arch-based Linux distros
@@ -27,14 +25,20 @@
 #   
 #   Rated R for Raunchy Aussie 
 #
-#  Script Purpose:
-#    This is a placeholder for a future GUI for dill.
-#    Don't get your hopes up, this won't be worked on for a while.
-# -------------------------------------------------
+# Fish completion for dill
 
-echo "Look at you, all fancy, wantin' a GUI."
-echo "We're still bashing rocks together to get the command-line version working."
-echo "A graphical interface is a bloody long way off, mate."
-echo "Check back after the first stable release. Maybe."
+function __dill_packages
+    pacman -Slq 2>/dev/null
+end
 
-exit 1
+function __dill_installed
+    pacman -Qq 2>/dev/null
+end
+
+complete -c dill -f -n '__fish_is_first_arg' -a 'update install remove search -Syu -S -R -Q'
+
+complete -c dill -f -n '__fish_seen_subcommand_from install -S' -a '(__dill_packages)'
+
+complete -c dill -f -n '__fish_seen_subcommand_from remove -R' -a '(__dill_installed)'
+
+complete -c dill -f -n '__fish_seen_subcommand_from search -Q' -a '(__dill_packages)'

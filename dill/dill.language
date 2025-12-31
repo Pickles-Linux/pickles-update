@@ -36,15 +36,15 @@
 # We can source this file and then echo "${MSG_CODE}"
 
 # General Messages
-MSG_NO_ARGS="Oi, ya drongo! Ya need to tell me what to do. Use 'dill help' or somethin'."
-MSG_UNKNOWN_COMMAND="What in the blazes is '%s'? That's not a command I know, ya galah."
+MSG_NO_ARGS="Oi, ya drongo! Ya need to tell me what to do. Use '🥒dill help' or somethin'."
+MSG_UNKNOWN_COMMAND="What in the blazes is '%s'? That's not a command I know, ya fuckin' 🥒."
 MSG_COMMAND_LIST="Try 'update', 'install', 'remove', or 'search'."
 
 # Dispatcher Messages
-MSG_UPDATE_PROMPT="Righto, let's get this system updated. Handing off to dill-update..."
-MSG_INSTALL_PROMPT="Aight, let's install somethin'. Passing this over to dill-install."
-MSG_REMOVE_PROMPT="Decided to ditch somethin', eh? The dill-remove script will sort it out."
-MSG_QUERY_PROMPT="Lookin' for somethin'? Let's see what dill-query can dig up for ya."
+MSG_UPDATE_PROMPT="Righto, let's get this system updated. Handing off to 🥒 dill-update..."
+MSG_INSTALL_PROMPT="Aight, let's install somethin'. Passing this over to 🥒 dill-install."
+MSG_REMOVE_PROMPT="Decided to ditch somethin', eh? 🥒 dill-remove will sort it out."
+MSG_QUERY_PROMPT="Lookin' for somethin'? Let's see what 🥒 dill-query can dig up for ya."
 
 # Updates
 MSG_UPDATE_START="Righto, let's get this system updated..."

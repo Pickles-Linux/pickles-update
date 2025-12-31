@@ -1,11 +1,11 @@
 #!/bin/bash
 #
 ##########################################################
-#  Dill 
+#  Dill
 #  System update utility for Arch-based Linux distros
 #
 #  Repository:
-#    https://github.com/Pickles-Linux/pickles-update 
+#    https://github.com/Pickles-Linux/pickles-update
 #       To be moved to own Repor after 1st Stable Release
 #
 #  Author:
@@ -24,24 +24,190 @@
 #    Designed for Humor, and future growth.
 #   Designed as a complete AUR Helper, removing the need for Paru, yay or alternatives
 #   dill is designed to be modular for easy update, ease of addition of extra scripts etc.
-#   
-#   Rated R for Raunchy Aussie 
+#
+#   Rated R for Raunchy Aussie
 #
 #  Script Purpose:
 #    This script handles installing packages.
 #    It first checks the official repos, and if it's not found there,
 #    it'll search the AUR.
 # -------------------------------------------------
+#Usage:
+# dill install <package-name>
+# dill install <part-package-name> tab completion similiar to Pacman (Create completion files for bash/fish/zsh )
+# dill -S <package-name>
+# dill -U <package>
 
-echo "DILL-INSTALL: Someone wants to install something? About bloody time."
-echo "(I'm just a placeholder for now, so I can't actually install '$1' for ya. Sorry, chief.)"
+# Source config and language files
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+USER_CONFIG_PATH="$HOME/.config/dill/dill.config"
+DEFAULT_CONFIG_PATH="$SCRIPT_DIR/../dill.config"
 
-# TODO:
-# 1. Source config and language files.
-# 2. Check for package in official repos.
-# 3. If found, ask to install with pacman.
-# 4. If not found, search the AUR using dill-aur-library.
-# 5. If found in AUR, use dill-aur-library to build and install.
-# 6. If not found anywhere, tell the user they're dreaming.
+if [ -f "$USER_CONFIG_PATH" ]; then
+    source "$USER_CONFIG_PATH"
+elif [ -f "$DEFAULT_CONFIG_PATH" ]; then
+    source "$DEFAULT_CONFIG_PATH"
+fi
 
-exit 0
+source "$SCRIPT_DIR/../dill.language"
+source "$SCRIPT_DIR/dill-aur-library"
+
+# Function to check if package exists in official repos
+check_official_repo() {
+    local pkg="$1"
+    pacman -Si "$pkg" >/dev/null 2>&1
+    return $?
+}
+
+# Function to search official repos
+search_official_repo() {
+    local query="$1"
+    pacman -Ss "$query" 2>/dev/null | grep "^[^ ]" | head -20
+}
+
+# Function to install from official repos
+install_official() {
+    local pkg="$1"
+    echo "Installing $pkg from official repos..."
+    if [ "$DEBUG" = true ]; then
+        echo "DEBUG: Running sudo pacman -S --noconfirm $pkg"
+    fi
+    sudo pacman -S --noconfirm "$pkg"
+    return $?
+}
+
+# Function to install from AUR
+install_aur() {
+    local pkg="$1"
+    echo "Installing $pkg from AUR..."
+
+    # Create temp directory
+    local temp_dir="/tmp/dill-aur-$pkg"
+    mkdir -p "$temp_dir"
+
+    # Download PKGBUILD
+    if ! aur_download "$pkg" "$temp_dir"; then
+        echo "Failed to download $pkg from AUR"
+        rm -rf "$temp_dir"
+        return 1
+    fi
+
+    cd "$temp_dir"
+
+    # Build package
+    if ! aur_build "$temp_dir"; then
+        echo "Failed to build $pkg"
+        rm -rf "$temp_dir"
+        return 1
+    fi
+
+    # Find the built package file
+    local pkgfile=$(ls *.pkg.tar.zst 2>/dev/null | head -1)
+    if [ -z "$pkgfile" ]; then
+        pkgfile=$(ls *.pkg.tar.xz 2>/dev/null | head -1)
+    fi
+
+    if [ -z "$pkgfile" ]; then
+        echo "Could not find built package file"
+        rm -rf "$temp_dir"
+        return 1
+    fi
+
+    # Install package
+    if ! aur_install "$pkgfile"; then
+        echo "Failed to install $pkg"
+        rm -rf "$temp_dir"
+        return 1
+    fi
+
+    # Clean up
+    if [ "$KEEP_CACHE" != true ]; then
+        rm -rf "$temp_dir"
+    fi
+
+    return 0
+}
+
+# Function to prompt for reboot
+prompt_reboot() {
+    echo "Installation complete. Want to reboot now? (y/N)"
+    read -r response
+    case "$response" in
+        [Yy]|[Yy][Ee][Ss])
+            echo "Rebooting..."
+            sudo reboot
+            ;;
+        *)
+            echo "Alright, no reboot for now."
+            ;;
+    esac
+}
+
+# Main logic
+if [ $# -eq 0 ]; then
+    echo "Oi, what package do ya want to install? Usage: dill install <package-name>"
+    exit 1
+fi
+
+PACKAGE="$1"
+
+echo "DILL-INSTALL: Someone wants to install '$PACKAGE'? Let's see what we can do..."
+
+# Check if exact package exists in official repos
+if check_official_repo "$PACKAGE"; then
+    echo "Found '$PACKAGE' in official repos."
+    echo "Install '$PACKAGE' from official repos? (Y/n)"
+    read -r response
+    case "$response" in
+        [Nn]|[Nn][Oo])
+            echo "Alright, no install then."
+            exit 0
+            ;;
+        *)
+            if install_official "$PACKAGE"; then
+                prompt_reboot
+                exit 0
+            else
+                echo "Failed to install '$PACKAGE' from official repos."
+                exit 1
+            fi
+            ;;
+    esac
+fi
+
+# Check AUR
+echo "Not in official repos, checking AUR..."
+AUR_RESULTS=$(aur_search "$PACKAGE")
+
+if [ -n "$AUR_RESULTS" ]; then
+    echo "Found in AUR:"
+    echo "$AUR_RESULTS" | nl -v1
+    echo ""
+    echo "Install the first one? (Y/n)"
+    read -r response
+    case "$response" in
+        [Yy]|[Yy][Ee][Ss])
+            # Get the first package name from results
+            FIRST_PKG=$(echo "$AUR_RESULTS" | head -1 | cut -d: -f1)
+            if [ -n "$FIRST_PKG" ]; then
+                if install_aur "$FIRST_PKG"; then
+                    prompt_reboot
+                    exit 0
+                else
+                    echo "Failed to install '$FIRST_PKG' from AUR."
+                    exit 1
+                fi
+            else
+                echo "Could not determine package name from AUR results."
+                exit 1
+            fi
+            ;;
+        *)
+            echo "Alright, no install then."
+            exit 0
+            ;;
+    esac
+else
+    echo "Sorry chief, '$PACKAGE' ain't in the official repos or AUR. You're dreaming."
+    exit 1
+fi
