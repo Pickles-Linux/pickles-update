@@ -41,7 +41,7 @@
 # -------------------------------------------------
 
 # Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" &> /dev/null && pwd )"
 
 # Define the path to the scripts directory
 SCRIPTS_DIR="$SCRIPT_DIR/scripts"
